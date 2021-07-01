@@ -1,0 +1,913 @@
+<?xml version="1.0"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.omg.org/bpmn20" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:bpsim="http://www.bpsim.org/schemas/1.0" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:drools="http://www.jboss.org/drools" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:albpm="http://www.albpm.com/2007/albpm.XPDL2" xmlns:xpdl="http://www.wfmc.org/2004/XPDL2.0alpha" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color" xmlns:xpdExt="http://www.tibco.com/XPD/xpdExtension1.0.0" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd http://www.jboss.org/drools drools.xsd http://www.bpsim.org/schemas/1.0 bpsim.xsd" targetNamespace="http://www.omg.org/bpmn20" typeLanguage="http://www.java.com/javaTypes">
+  <bpmn2:itemDefinition id="_String" isCollection="false" structureRef="String"/>
+  <bpmn2:itemDefinition id="_Integer" isCollection="false" structureRef="Integer"/>
+  <bpmn2:itemDefinition id="_Float" isCollection="false" structureRef="Float"/>
+  <bpmn2:itemDefinition id="_Boolean" isCollection="false" structureRef="Boolean"/>
+  <bpmn2:itemDefinition id="_Object" isCollection="false" structureRef="Object"/>
+  <bpmn2:process drools:packageName="org.jbpm" drools:version="1.0" isExecutable="true" id="TrueSys" name="TrueSys">
+    <!--Start Event-->
+    <bpmn2:startEvent drools:bgcolor="#9acd32" drools:selectable="true" name="Begin" id="Begin">
+      <bpmn2:outgoing>BeginToProcessRegister</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <!--End Events-->
+    <!--Gateways-->
+    <bpmn2:parallelGateway drools:bgcolor="#f0e68c" drools:selectable="true" drools:bordercolor="#a67f00" drools:dg="" name="SplitUpdateandReviewer" id="SplitUpdateandReviewer" gatewayDirection="Diverging">
+      <bpmn2:incoming>sendToWaitToSplitUpdateandReviewer</bpmn2:incoming>
+      <bpmn2:outgoing>SplitUpdateandReviewerToSplitReviewers</bpmn2:outgoing>
+      <bpmn2:outgoing>SplitUpdateandReviewerToUPDTRX</bpmn2:outgoing>
+      <bpmn2:outgoing>SplitUpdateandReviewerToDUPTRX</bpmn2:outgoing>
+      <bpmn2:outgoing>SplitUpdateandReviewerToCLOSETRX</bpmn2:outgoing>
+    </bpmn2:parallelGateway>
+    <bpmn2:parallelGateway drools:bgcolor="#f0e68c" drools:selectable="true" drools:bordercolor="#a67f00" drools:dg="" name="SplitReviewers" id="SplitReviewers" gatewayDirection="Diverging">
+      <bpmn2:incoming>SplitUpdateandReviewerToSplitReviewers</bpmn2:incoming>
+      <bpmn2:outgoing>SplitReviewersToBUSREV</bpmn2:outgoing>
+      <bpmn2:outgoing>SplitReviewersToCTLREV</bpmn2:outgoing>
+      <bpmn2:outgoing>SplitReviewersToREDCONF</bpmn2:outgoing>
+      <bpmn2:outgoing>SplitReviewersToREDCON2</bpmn2:outgoing>
+    </bpmn2:parallelGateway>
+    <bpmn2:exclusiveGateway drools:bgcolor="#f0e68c" drools:selectable="true" drools:bordercolor="#a67f00" drools:dg="" name="Conditional3" id="Conditional3" gatewayDirection="Diverging">
+      <bpmn2:incoming>ProcessStatusToConditional3</bpmn2:incoming>
+      <bpmn2:outgoing>Conditional3ToProcessComplete</bpmn2:outgoing>
+      <bpmn2:outgoing>Conditional3ToProcessDuplicateTransaction</bpmn2:outgoing>
+      <bpmn2:outgoing>Conditional3ToMarkFatalConflict</bpmn2:outgoing>
+      <bpmn2:outgoing>Conditional3ToConditional6</bpmn2:outgoing>
+      <bpmn2:outgoing>Conditional3ToBankerC</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:exclusiveGateway drools:bgcolor="#f0e68c" drools:selectable="true" drools:bordercolor="#a67f00" drools:dg="" name="Conditional6" id="Conditional6" gatewayDirection="Diverging">
+      <bpmn2:incoming>Conditional3ToConditional6</bpmn2:incoming>
+      <bpmn2:outgoing>Conditional6ToEmailReReview</bpmn2:outgoing>
+      <bpmn2:outgoing>Conditional6ToEmailBusGreenControlRed</bpmn2:outgoing>
+      <bpmn2:outgoing>Conditional6ToEmailBusRedControlGreen</bpmn2:outgoing>
+      <bpmn2:outgoing>Conditional6ToStartFatalTimer</bpmn2:outgoing>
+      <bpmn2:outgoing>Conditional6TosendToWait</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:exclusiveGateway drools:bgcolor="#f0e68c" drools:selectable="true" drools:bordercolor="#a67f00" drools:dg="" name="Conditional7" id="Conditional7" gatewayDirection="Diverging">
+      <bpmn2:incoming>CLOSETRX_transition_event_due_timerToConditional7</bpmn2:incoming>
+      <bpmn2:incoming>CLOSETRXToConditional7</bpmn2:incoming>
+      <bpmn2:outgoing>Conditional7ToFataConflictTimedOut</bpmn2:outgoing>
+      <bpmn2:outgoing>Conditional7ToCLOSETRX</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:exclusiveGateway drools:bgcolor="#f0e68c" drools:selectable="true" drools:bordercolor="#a67f00" drools:dg="" name="Conditional" id="Conditional" gatewayDirection="Diverging">
+      <bpmn2:incoming>Conditional1ToConditional</bpmn2:incoming>
+      <bpmn2:incoming>EmailExpDateChangeToConditional</bpmn2:incoming>
+      <bpmn2:outgoing>ConditionalToEvaluateUpdate</bpmn2:outgoing>
+      <bpmn2:outgoing>ConditionalToNotifyChange</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:exclusiveGateway drools:bgcolor="#f0e68c" drools:selectable="true" drools:bordercolor="#a67f00" drools:dg="" name="Conditional1" id="Conditional1" gatewayDirection="Diverging">
+      <bpmn2:incoming>UPDTRXToConditional1</bpmn2:incoming>
+      <bpmn2:outgoing>Conditional1ToConditional</bpmn2:outgoing>
+      <bpmn2:outgoing>Conditional1ToEmailExpDateChange</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <!--Tasks-->
+    <!--Below task was created from xpdl:No task type -->
+    <bpmn2:scriptTask name="No-op" drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" id="ProcessGroup">
+      <bpmn2:incoming/>
+      <bpmn2:outgoing>ProcessGroupToHandleException</bpmn2:outgoing>
+    </bpmn2:scriptTask>
+    <bpmn2:userTask drools:selectable="true" drools:scriptFormat="http://www.java.com/java" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" name="REDCONF" id="REDCONF">
+      <bpmn2:extensionElements/>
+      <bpmn2:incoming>SplitReviewersToREDCONF</bpmn2:incoming>
+      <bpmn2:outgoing>REDCONFToJoin11</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask drools:selectable="true" drools:scriptFormat="http://www.java.com/java" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" name="REDCON2" id="REDCON2">
+      <bpmn2:extensionElements/>
+      <bpmn2:incoming>SplitReviewersToREDCON2</bpmn2:incoming>
+      <bpmn2:outgoing>REDCON2ToJoin12</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask drools:selectable="true" drools:scriptFormat="http://www.java.com/java" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" name="HandleException" id="HandleException">
+      <bpmn2:extensionElements/>
+      <bpmn2:incoming>ProcessGroupToHandleException</bpmn2:incoming>
+    </bpmn2:userTask>
+    <bpmn2:userTask drools:selectable="true" drools:scriptFormat="http://www.java.com/java" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" name="BUSREV" id="BUSREV">
+      <bpmn2:extensionElements/>
+      <bpmn2:incoming>SplitReviewersToBUSREV</bpmn2:incoming>
+      <bpmn2:incoming>EmailBusRevConflictToBUSREV</bpmn2:incoming>
+      <bpmn2:incoming>RemindToBUSREV</bpmn2:incoming>
+      <bpmn2:outgoing>BUSREVToJoin1</bpmn2:outgoing>
+      <bpmn2:outgoing>BUSREVToRemind</bpmn2:outgoing>
+      <bpmn2:outgoing>BUSREVToEmailBusRevConflict</bpmn2:outgoing>
+      <bpmn2:outgoing>BUSREVToRemind</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask drools:selectable="true" drools:scriptFormat="http://www.java.com/java" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" name="CTLREV" id="CTLREV">
+      <bpmn2:extensionElements/>
+      <bpmn2:incoming>SplitReviewersToCTLREV</bpmn2:incoming>
+      <bpmn2:incoming>Remind1ToCTLREV</bpmn2:incoming>
+      <bpmn2:incoming>EmailControlRevConflictToCTLREV</bpmn2:incoming>
+      <bpmn2:outgoing>CTLREVToJoin1</bpmn2:outgoing>
+      <bpmn2:outgoing>CTLREVToRemind1</bpmn2:outgoing>
+      <bpmn2:outgoing>CTLREVToEmailControlRevConflict</bpmn2:outgoing>
+      <bpmn2:outgoing>CTLREVToRemind1</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="EmailFatalConflict1" drools:taskName="EmailFatalConflict1" id="EmailFatalConflict1">
+      <bpmn2:incoming>MarkFatalConflictToEmailFatalConflict1</bpmn2:incoming>
+      <bpmn2:outgoing>EmailFatalConflict1ToEnd</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="MarkDup" drools:taskName="MarkDup" id="MarkDup">
+      <bpmn2:incoming>DUPTRXToMarkDup</bpmn2:incoming>
+      <bpmn2:outgoing>MarkDupToJoin</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="MarkClose" drools:taskName="MarkClose" id="MarkClose">
+      <bpmn2:incoming>CLOSETRXToMarkClose</bpmn2:incoming>
+      <bpmn2:outgoing>MarkCloseToJoin</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="StartFatalTimer" drools:taskName="StartFatalTimer" id="StartFatalTimer">
+      <bpmn2:incoming>Conditional6ToStartFatalTimer</bpmn2:incoming>
+      <bpmn2:outgoing>StartFatalTimerTosendToWait</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="EvaluateUpdate" drools:taskName="EvaluateUpdate" id="EvaluateUpdate">
+      <bpmn2:incoming>ConditionalToEvaluateUpdate</bpmn2:incoming>
+      <bpmn2:outgoing>EvaluateUpdateToJoin</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="sendToWait" drools:taskName="sendToWait" id="sendToWait">
+      <bpmn2:incoming>EmailNewTosendToWait</bpmn2:incoming>
+      <bpmn2:outgoing>sendToWaitToSplitUpdateandReviewer</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="ProcessComplete" drools:taskName="ProcessComplete" id="ProcessComplete">
+      <bpmn2:incoming>Conditional3ToProcessComplete</bpmn2:incoming>
+      <bpmn2:outgoing>ProcessCompleteToEnd</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="ProcessDuplicateTransaction" drools:taskName="ProcessDuplicateTransaction" id="ProcessDuplicateTransaction">
+      <bpmn2:incoming>Conditional3ToProcessDuplicateTransaction</bpmn2:incoming>
+      <bpmn2:outgoing>ProcessDuplicateTransactionToNOTEDUP</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="MarkFatalConflict" drools:taskName="MarkFatalConflict" id="MarkFatalConflict">
+      <bpmn2:incoming>Conditional3ToMarkFatalConflict</bpmn2:incoming>
+      <bpmn2:outgoing>MarkFatalConflictToEmailFatalConflict1</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="NOTEDUP" drools:taskName="NOTEDUP" id="NOTEDUP">
+      <bpmn2:incoming>ProcessDuplicateTransactionToNOTEDUP</bpmn2:incoming>
+      <bpmn2:outgoing>NOTEDUPToEnd</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="ProcessRegister" drools:taskName="ProcessRegister" id="ProcessRegister">
+      <bpmn2:incoming>BeginToProcessRegister</bpmn2:incoming>
+      <bpmn2:outgoing>ProcessRegisterToEmailNew</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="ProcessStatus" drools:taskName="ProcessStatus" id="ProcessStatus">
+      <bpmn2:incoming>JoinToProcessStatus</bpmn2:incoming>
+      <bpmn2:outgoing>ProcessStatusToConditional3</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="FataConflictTimedOut" drools:taskName="FataConflictTimedOut" id="FataConflictTimedOut">
+      <bpmn2:incoming>Conditional7ToFataConflictTimedOut</bpmn2:incoming>
+      <bpmn2:outgoing>FataConflictTimedOutToJoin1</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="EmailReReview" drools:taskName="EmailReReview" id="EmailReReview">
+      <bpmn2:incoming>Conditional6ToEmailReReview</bpmn2:incoming>
+      <bpmn2:outgoing>EmailReReviewTosendToWait</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="EmailBusRevConflict" drools:taskName="EmailBusRevConflict" id="EmailBusRevConflict">
+      <bpmn2:incoming>BUSREVToEmailBusRevConflict</bpmn2:incoming>
+      <bpmn2:outgoing>EmailBusRevConflictToBUSREV</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="EmailControlRevConflict" drools:taskName="EmailControlRevConflict" id="EmailControlRevConflict">
+      <bpmn2:incoming>CTLREVToEmailControlRevConflict</bpmn2:incoming>
+      <bpmn2:outgoing>EmailControlRevConflictToCTLREV</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="EmailBusGreenControlRed" drools:taskName="EmailBusGreenControlRed" id="EmailBusGreenControlRed">
+      <bpmn2:incoming>Conditional6ToEmailBusGreenControlRed</bpmn2:incoming>
+      <bpmn2:outgoing>EmailBusGreenControlRedTosendToWait</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="EmailExpDateChange" drools:taskName="EmailExpDateChange" id="EmailExpDateChange">
+      <bpmn2:incoming>Conditional1ToEmailExpDateChange</bpmn2:incoming>
+      <bpmn2:outgoing>EmailExpDateChangeToConditional</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="EmailBusRedControlGreen" drools:taskName="EmailBusRedControlGreen" id="EmailBusRedControlGreen">
+      <bpmn2:incoming>Conditional6ToEmailBusRedControlGreen</bpmn2:incoming>
+      <bpmn2:outgoing>EmailBusRedControlGreenTosendToWait</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="EmailNew" drools:taskName="EmailNew" id="EmailNew">
+      <bpmn2:incoming>ProcessRegisterToEmailNew</bpmn2:incoming>
+      <bpmn2:outgoing>EmailNewTosendToWait</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="Remind" drools:taskName="Remind" id="Remind">
+      <bpmn2:incoming>BUSREV_transition_event_due_timerToRemind</bpmn2:incoming>
+      <bpmn2:outgoing>RemindToBUSREV</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="Remind1" drools:taskName="Remind1" id="Remind1">
+      <bpmn2:incoming>CTLREV_transition_event_due_timerToRemind1</bpmn2:incoming>
+      <bpmn2:outgoing>Remind1ToCTLREV</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="NotifyChange" drools:taskName="NotifyChange" id="NotifyChange">
+      <bpmn2:incoming>ConditionalToNotifyChange</bpmn2:incoming>
+      <bpmn2:outgoing>NotifyChangeToUPDTRX</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="BankerC" drools:taskName="BankerC" id="BankerC">
+      <bpmn2:incoming>Conditional3ToBankerC</bpmn2:incoming>
+      <bpmn2:outgoing>BankerCToBankerCleared</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="BankerCleared" drools:taskName="BankerCleared" id="BankerCleared">
+      <bpmn2:incoming>BankerCToBankerCleared</bpmn2:incoming>
+      <bpmn2:outgoing>BankerClearedToEnd</bpmn2:outgoing>
+      <bpmn2:script/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="" drools:taskName="C_sendToWait" id="C_sendToWait">
+      <bpmn2:incoming>EmailBusGreenControlRedTosendToWait</bpmn2:incoming>
+      <bpmn2:outgoing/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="" drools:taskName="C_Join1" id="C_Join1">
+      <bpmn2:incoming>FataConflictTimedOutToJoin1</bpmn2:incoming>
+      <bpmn2:outgoing/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="" drools:taskName="C_Join11" id="C_Join11">
+      <bpmn2:incoming>REDCONFToJoin11</bpmn2:incoming>
+      <bpmn2:outgoing/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="" drools:taskName="C_Join12" id="C_Join12">
+      <bpmn2:incoming>REDCON2ToJoin12</bpmn2:incoming>
+      <bpmn2:outgoing/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="" drools:taskName="C_sendToWait" id="C_sendToWait">
+      <bpmn2:incoming>EmailBusGreenControlRedTosendToWait</bpmn2:incoming>
+      <bpmn2:outgoing/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="" drools:taskName="C_Join1" id="C_Join1">
+      <bpmn2:incoming>FataConflictTimedOutToJoin1</bpmn2:incoming>
+      <bpmn2:outgoing/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="" drools:taskName="C_Join11" id="C_Join11">
+      <bpmn2:incoming>REDCONFToJoin11</bpmn2:incoming>
+      <bpmn2:outgoing/>
+    </bpmn2:scriptTask>
+    <bpmn2:scriptTask drools:selectable="true" color:background-color="#fafad2" color:border-color="#000000" color:color="#000000" scriptFormat="http://www.javascript.com/javascript" name="" drools:taskName="C_Join12" id="C_Join12">
+      <bpmn2:incoming>REDCON2ToJoin12</bpmn2:incoming>
+      <bpmn2:outgoing/>
+    </bpmn2:scriptTask>
+    <!--Messages-->
+    <bpmn2:intermediateCatchEvent drools:selectable="true" drools:boundaryca="" color:background-color="#f5deb3" color:border-color="#a0522d" color:color="#000000" id="UPDTRX">
+      <bpmn2:incoming>SplitUpdateandReviewerToUPDTRX</bpmn2:incoming>
+      <bpmn2:incoming>NotifyChangeToUPDTRX</bpmn2:incoming>
+      <bpmn2:outgoing>UPDTRXToConditional1</bpmn2:outgoing>
+      <bpmn2:messageEventDefinition id="message_UPDTRX" messageRef="msgref_UPDTRX" drools:msgref="msgref_UPDTRX"/>
+    </bpmn2:intermediateCatchEvent>
+    <bpmn2:intermediateCatchEvent drools:selectable="true" drools:boundaryca="" color:background-color="#f5deb3" color:border-color="#a0522d" color:color="#000000" id="DUPTRX">
+      <bpmn2:incoming>SplitUpdateandReviewerToDUPTRX</bpmn2:incoming>
+      <bpmn2:outgoing>DUPTRXToMarkDup</bpmn2:outgoing>
+      <bpmn2:messageEventDefinition id="message_DUPTRX" messageRef="msgref_DUPTRX" drools:msgref="msgref_DUPTRX"/>
+    </bpmn2:intermediateCatchEvent>
+    <bpmn2:intermediateCatchEvent drools:selectable="true" drools:boundaryca="" color:background-color="#f5deb3" color:border-color="#a0522d" color:color="#000000" id="CLOSETRX">
+      <bpmn2:incoming>SplitUpdateandReviewerToCLOSETRX</bpmn2:incoming>
+      <bpmn2:incoming>Conditional7ToCLOSETRX</bpmn2:incoming>
+      <bpmn2:outgoing>CLOSETRXToMarkClose</bpmn2:outgoing>
+      <bpmn2:outgoing>CLOSETRXToConditional7</bpmn2:outgoing>
+      <bpmn2:messageEventDefinition id="message_CLOSETRX" messageRef="msgref_CLOSETRX" drools:msgref="msgref_CLOSETRX"/>
+    </bpmn2:intermediateCatchEvent>
+    <!--Timers-->
+    <bpmn2:intermediateCatchEvent drools:selectable="true" drools:boundaryca="" color:background-color="#f5deb3" color:border-color="#a0522d" color:color="#000000" name="CTLREV_transition_event_due_timer" id="CTLREV_transition_event_due_timer">
+      <bpmn2:outgoing>CTLREV_transition_event_due_timerToRemind1</bpmn2:outgoing>
+      <bpmn2:timerEventDefinition id="timer_CTLREV_transition_event_due_timer">
+        <bpmn2:timeDuration xsi:type="bpmn2:tFormalExpression" id="duration_CTLREV_transition_event_due_timer">
+10s</bpmn2:timeDuration>
+      </bpmn2:timerEventDefinition>
+    </bpmn2:intermediateCatchEvent>
+    <bpmn2:intermediateCatchEvent drools:selectable="true" drools:boundaryca="" color:background-color="#f5deb3" color:border-color="#a0522d" color:color="#000000" name="BUSREV_transition_event_due_timer" id="BUSREV_transition_event_due_timer">
+      <bpmn2:outgoing>BUSREV_transition_event_due_timerToRemind</bpmn2:outgoing>
+      <bpmn2:timerEventDefinition id="timer_BUSREV_transition_event_due_timer">
+        <bpmn2:timeDuration xsi:type="bpmn2:tFormalExpression" id="duration_BUSREV_transition_event_due_timer">
+10s</bpmn2:timeDuration>
+      </bpmn2:timerEventDefinition>
+    </bpmn2:intermediateCatchEvent>
+    <bpmn2:intermediateCatchEvent drools:selectable="true" drools:boundaryca="" color:background-color="#f5deb3" color:border-color="#a0522d" color:color="#000000" name="CLOSETRX_transition_event_due_timer" id="CLOSETRX_transition_event_due_timer">
+      <bpmn2:outgoing>CLOSETRX_transition_event_due_timerToConditional7</bpmn2:outgoing>
+      <bpmn2:timerEventDefinition id="timer_CLOSETRX_transition_event_due_timer">
+        <bpmn2:timeDuration xsi:type="bpmn2:tFormalExpression" id="duration_CLOSETRX_transition_event_due_timer">
+10s</bpmn2:timeDuration>
+      </bpmn2:timerEventDefinition>
+    </bpmn2:intermediateCatchEvent>
+    <bpmn2:sequenceFlow id="BeginToProcessRegister" sourceRef="Begin" targetRef="ProcessRegister"/>
+    <bpmn2:sequenceFlow id="EvaluateUpdateToJoin" sourceRef="EvaluateUpdate" targetRef="Join"/>
+    <bpmn2:sequenceFlow id="SplitUpdateandReviewerToSplitReviewers" sourceRef="SplitUpdateandReviewer" targetRef="SplitReviewers"/>
+    <bpmn2:sequenceFlow id="SplitReviewersToBUSREV" sourceRef="SplitReviewers" targetRef="BUSREV"/>
+    <bpmn2:sequenceFlow id="SplitUpdateandReviewerToUPDTRX" sourceRef="SplitUpdateandReviewer" targetRef="UPDTRX"/>
+    <bpmn2:sequenceFlow id="JoinToProcessStatus" sourceRef="Join" targetRef="ProcessStatus"/>
+    <bpmn2:sequenceFlow id="Join1ToJoin" sourceRef="Join1" targetRef="Join"/>
+    <bpmn2:sequenceFlow id="BUSREVToJoin1" sourceRef="BUSREV" targetRef="Join1">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.javascript.com/javascript" id="FormalExpression_BUSREVToJoin1">
+                        
+                            bus_stat_update="Y"
+                    </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="SplitReviewersToCTLREV" sourceRef="SplitReviewers" targetRef="CTLREV"/>
+    <bpmn2:sequenceFlow id="CTLREVToJoin1" sourceRef="CTLREV" targetRef="Join1">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.javascript.com/javascript" id="FormalExpression_CTLREVToJoin1">
+                        
+                            ctl_stat_update="Y"
+                    </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="CTLREV_transition_event_due_timerToRemind1" sourceRef="CTLREV_transition_event_due_timer" targetRef="Remind1"/>
+    <bpmn2:sequenceFlow id="CTLREVToRemind1" sourceRef="CTLREV" targetRef="Remind1">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.javascript.com/javascript" id="FormalExpression_CTLREVToRemind1">
+                        
+                            '90d'
+                    </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Remind1ToCTLREV" sourceRef="Remind1" targetRef="CTLREV"/>
+    <bpmn2:sequenceFlow id="BUSREV_transition_event_due_timerToRemind" sourceRef="BUSREV_transition_event_due_timer" targetRef="Remind"/>
+    <bpmn2:sequenceFlow id="BUSREVToRemind" sourceRef="BUSREV" targetRef="Remind">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.javascript.com/javascript" id="FormalExpression_BUSREVToRemind">
+                        
+                            '90d'
+                    </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="sendToWaitToSplitUpdateandReviewer" sourceRef="sendToWait" targetRef="SplitUpdateandReviewer"/>
+    <bpmn2:sequenceFlow id="Conditional3ToProcessComplete" sourceRef="Conditional3" targetRef="ProcessComplete">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.javascript.com/javascript" id="FormalExpression_Conditional3ToProcessComplete">
+                        
+                            tr_mark_close=="Y"
+                    </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="ProcessCompleteToEnd" sourceRef="ProcessComplete" targetRef="End"/>
+    <bpmn2:sequenceFlow id="ProcessDuplicateTransactionToNOTEDUP" sourceRef="ProcessDuplicateTransaction" targetRef="NOTEDUP"/>
+    <bpmn2:sequenceFlow id="Conditional3ToProcessDuplicateTransaction" sourceRef="Conditional3" targetRef="ProcessDuplicateTransaction">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.javascript.com/javascript" id="FormalExpression_Conditional3ToProcessDuplicateTransaction">
+                        
+                            tr_mark_dup=="Y" and (tr_mark_close!="Y")and (tr_fatal_conf!="Y") and (tr_fatal_conf!="T")
+                    </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="MarkFatalConflictToEmailFatalConflict1" sourceRef="MarkFatalConflict" targetRef="EmailFatalConflict1"/>
+    <bpmn2:sequenceFlow id="Conditional3ToMarkFatalConflict" sourceRef="Conditional3" targetRef="MarkFatalConflict">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.javascript.com/javascript" id="FormalExpression_Conditional3ToMarkFatalConflict">
+                        
+                            (tr_fatal_conf=="Y" or tr_fatal_conf=="T")and (tr_mark_close!="Y")
+                    </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="NOTEDUPToEnd" sourceRef="NOTEDUP" targetRef="End"/>
+    <bpmn2:sequenceFlow id="SplitUpdateandReviewerToDUPTRX" sourceRef="SplitUpdateandReviewer" targetRef="DUPTRX"/>
+    <bpmn2:sequenceFlow id="DUPTRXToMarkDup" sourceRef="DUPTRX" targetRef="MarkDup"/>
+    <bpmn2:sequenceFlow id="SplitUpdateandReviewerToCLOSETRX" sourceRef="SplitUpdateandReviewer" targetRef="CLOSETRX"/>
+    <bpmn2:sequenceFlow id="CLOSETRXToMarkClose" sourceRef="CLOSETRX" targetRef="MarkClose"/>
+    <bpmn2:sequenceFlow id="ProcessRegisterToEmailNew" sourceRef="ProcessRegister" targetRef="EmailNew"/>
+    <bpmn2:sequenceFlow id="ProcessStatusToConditional3" sourceRef="ProcessStatus" targetRef="Conditional3"/>
+    <bpmn2:sequenceFlow id="Conditional3ToConditional6" sourceRef="Conditional3" targetRef="Conditional6"/>
+    <bpmn2:sequenceFlow id="Conditional6ToEmailReReview" sourceRef="Conditional6" targetRef="EmailReReview">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.javascript.com/javascript" id="FormalExpression_Conditional6ToEmailReReview">
+                        
+                            this.tr_rereview_req=="Y"
+                    </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Conditional7ToFataConflictTimedOut" sourceRef="Conditional7" targetRef="FataConflictTimedOut">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.javascript.com/javascript" id="FormalExpression_Conditional7ToFataConflictTimedOut">
+                        
+                            tr_bus_status=="R" and tr_ctl_status=="R"
+                    </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Conditional7ToCLOSETRX" sourceRef="Conditional7" targetRef="CLOSETRX"/>
+    <bpmn2:sequenceFlow id="FataConflictTimedOutToJoin1" sourceRef="FataConflictTimedOut" targetRef="C_Join1"/>
+    <bpmn2:sequenceFlow id="BUSREVToEmailBusRevConflict" sourceRef="BUSREV" targetRef="EmailBusRevConflict">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.javascript.com/javascript" id="FormalExpression_BUSREVToEmailBusRevConflict">
+                        
+                            tr_bus_conflict=="Y" and (bus_stat_update=="N" and tr_bus_status != "C")
+                    </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="EmailBusRevConflictToBUSREV" sourceRef="EmailBusRevConflict" targetRef="BUSREV"/>
+    <bpmn2:sequenceFlow id="CTLREVToEmailControlRevConflict" sourceRef="CTLREV" targetRef="EmailControlRevConflict">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.javascript.com/javascript" id="FormalExpression_CTLREVToEmailControlRevConflict">
+                        
+                            tr_ctl_conflict=="Y" and (ctl_stat_update=="N" and tr_ctl_status != "C")
+                    </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="EmailControlRevConflictToCTLREV" sourceRef="EmailControlRevConflict" targetRef="CTLREV"/>
+    <bpmn2:sequenceFlow id="EmailBusGreenControlRedTosendToWait" sourceRef="EmailBusGreenControlRed" targetRef="C_sendToWait"/>
+    <bpmn2:sequenceFlow id="Conditional6ToEmailBusGreenControlRed" sourceRef="Conditional6" targetRef="EmailBusGreenControlRed">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.javascript.com/javascript" id="FormalExpression_Conditional6ToEmailBusGreenControlRed">
+                        
+                            tr_bus_status =="G" and tr_ctl_status == "R"
+                    </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="EmailReReviewTosendToWait" sourceRef="EmailReReview" targetRef="C_sendToWait"/>
+    <bpmn2:sequenceFlow id="EmailBusRedControlGreenTosendToWait" sourceRef="EmailBusRedControlGreen" targetRef="C_sendToWait"/>
+    <bpmn2:sequenceFlow id="Conditional6ToEmailBusRedControlGreen" sourceRef="Conditional6" targetRef="EmailBusRedControlGreen">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.javascript.com/javascript" id="FormalExpression_Conditional6ToEmailBusRedControlGreen">
+                        
+                            tr_bus_status =="R" and tr_ctl_status == "G"
+                    </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="EmailNewTosendToWait" sourceRef="EmailNew" targetRef="sendToWait"/>
+    <bpmn2:sequenceFlow id="RemindToBUSREV" sourceRef="Remind" targetRef="BUSREV"/>
+    <bpmn2:sequenceFlow id="BUSREVToRemind" sourceRef="BUSREV" targetRef="Remind"/>
+    <bpmn2:sequenceFlow id="CTLREVToRemind1" sourceRef="CTLREV" targetRef="Remind1"/>
+    <bpmn2:sequenceFlow id="ConditionalToEvaluateUpdate" sourceRef="Conditional" targetRef="EvaluateUpdate">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.javascript.com/javascript" id="FormalExpression_ConditionalToEvaluateUpdate">
+                        
+                            tr_rereview_req == "Y"
+                    </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="NotifyChangeToUPDTRX" sourceRef="NotifyChange" targetRef="UPDTRX"/>
+    <bpmn2:sequenceFlow id="UPDTRXToConditional1" sourceRef="UPDTRX" targetRef="Conditional1"/>
+    <bpmn2:sequenceFlow id="EmailFatalConflict1ToEnd" sourceRef="EmailFatalConflict1" targetRef="End"/>
+    <bpmn2:sequenceFlow id="SplitReviewersToREDCONF" sourceRef="SplitReviewers" targetRef="REDCONF">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.javascript.com/javascript" id="FormalExpression_SplitReviewersToREDCONF">
+                        
+                            tr_bus_status=="R" and tr_ctl_status=="R"
+                    </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="SplitReviewersToREDCON2" sourceRef="SplitReviewers" targetRef="REDCON2">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.javascript.com/javascript" id="FormalExpression_SplitReviewersToREDCON2">
+                        
+                            tr_bus_status=="R" and tr_ctl_status=="R"
+                    </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="MarkDupToJoin" sourceRef="MarkDup" targetRef="Join"/>
+    <bpmn2:sequenceFlow id="MarkCloseToJoin" sourceRef="MarkClose" targetRef="Join"/>
+    <bpmn2:sequenceFlow id="StartFatalTimerTosendToWait" sourceRef="StartFatalTimer" targetRef="C_sendToWait"/>
+    <bpmn2:sequenceFlow id="Conditional6ToStartFatalTimer" sourceRef="Conditional6" targetRef="StartFatalTimer">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.javascript.com/javascript" id="FormalExpression_Conditional6ToStartFatalTimer">
+                        
+                            tr_bus_status=="R" and tr_ctl_status=="R" and this.tr_rereview_req!="Y"
+                    </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="REDCONFToJoin11" sourceRef="REDCONF" targetRef="C_Join11"/>
+    <bpmn2:sequenceFlow id="REDCON2ToJoin12" sourceRef="REDCON2" targetRef="C_Join12"/>
+    <bpmn2:sequenceFlow id="ProcessGroupToHandleException" sourceRef="ProcessGroup" targetRef="HandleException"/>
+    <bpmn2:sequenceFlow id="Conditional6TosendToWait" sourceRef="Conditional6" targetRef="C_sendToWait"/>
+    <bpmn2:sequenceFlow id="CLOSETRX_transition_event_due_timerToConditional7" sourceRef="CLOSETRX_transition_event_due_timer" targetRef="Conditional7"/>
+    <bpmn2:sequenceFlow id="CLOSETRXToConditional7" sourceRef="CLOSETRX" targetRef="Conditional7">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.javascript.com/javascript" id="FormalExpression_CLOSETRXToConditional7">
+                        
+                            '45d'
+                    </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="ConditionalToNotifyChange" sourceRef="Conditional" targetRef="NotifyChange"/>
+    <bpmn2:sequenceFlow id="Conditional1ToConditional" sourceRef="Conditional1" targetRef="Conditional"/>
+    <bpmn2:sequenceFlow id="EmailExpDateChangeToConditional" sourceRef="EmailExpDateChange" targetRef="Conditional"/>
+    <bpmn2:sequenceFlow id="Conditional1ToEmailExpDateChange" sourceRef="Conditional1" targetRef="EmailExpDateChange">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.javascript.com/javascript" id="FormalExpression_Conditional1ToEmailExpDateChange">
+                        
+                            exp_dt_updated == "Y"
+                    </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="Conditional3ToBankerC" sourceRef="Conditional3" targetRef="BankerC">
+      <bpmn2:conditionExpression xsi:type="bpmn2:tFormalExpression" language="http://www.javascript.com/javascript" id="FormalExpression_Conditional3ToBankerC">
+                        
+                            tr_bus_status == "G" and tr_ctl_status == "G"
+                    </bpmn2:conditionExpression>
+    </bpmn2:sequenceFlow>
+    <bpmn2:sequenceFlow id="BankerCToBankerCleared" sourceRef="BankerC" targetRef="BankerCleared"/>
+    <bpmn2:sequenceFlow id="BankerClearedToEnd" sourceRef="BankerCleared" targetRef="End"/>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_TrueSys">
+    <bpmndi:BPMNPlane id="BPMNPlane_TrueSys" bpmnElement="TrueSys">
+      <!-- Shapes -->
+      <bpmndi:BPMNShape id="BPMNShape_Begin" bpmnElement="Begin">
+        <dc:Bounds height="30.0" width="30.0" x="40.0" y="400.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_SplitUpdateandReviewer" bpmnElement="SplitUpdateandReviewer">
+        <dc:Bounds height="30.0" width="30.0" x="400.0" y="400.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EmailFatalConflict1" bpmnElement="EmailFatalConflict1">
+        <dc:Bounds height="30.0" width="30.0" x="2406.0" y="480.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_REDCONF" bpmnElement="REDCONF">
+        <dc:Bounds height="30.0" width="30.0" x="840.0" y="600.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_REDCON2" bpmnElement="REDCON2">
+        <dc:Bounds height="30.0" width="30.0" x="1240.0" y="120.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_MarkDup" bpmnElement="MarkDup">
+        <dc:Bounds height="30.0" width="30.0" x="1766.0" y="760.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_MarkClose" bpmnElement="MarkClose">
+        <dc:Bounds height="30.0" width="30.0" x="1766.0" y="1040.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_StartFatalTimer" bpmnElement="StartFatalTimer">
+        <dc:Bounds height="30.0" width="30.0" x="2006.0" y="680.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Join" bpmnElement="Join">
+        <dc:Bounds height="30.0" width="30.0" x="1926.0" y="400.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_HandleException" bpmnElement="HandleException">
+        <dc:Bounds height="30.0" width="30.0" x="2326.0" y="1160.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_SplitReviewers" bpmnElement="SplitReviewers">
+        <dc:Bounds height="30.0" width="30.0" x="560.0" y="400.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Join1" bpmnElement="Join1">
+        <dc:Bounds height="30.0" width="30.0" x="1766.0" y="400.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EvaluateUpdate" bpmnElement="EvaluateUpdate">
+        <dc:Bounds height="30.0" width="30.0" x="520.0" y="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_UPDTRX" bpmnElement="UPDTRX">
+        <dc:Bounds height="30.0" width="30.0" x="200.0" y="120.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_DUPTRX" bpmnElement="DUPTRX">
+        <dc:Bounds height="30.0" width="30.0" x="480.0" y="520.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_CLOSETRX" bpmnElement="CLOSETRX">
+        <dc:Bounds height="30.0" width="30.0" x="520.0" y="720.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_sendToWait" bpmnElement="sendToWait">
+        <dc:Bounds height="30.0" width="30.0" x="280.0" y="400.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Conditional3" bpmnElement="Conditional3">
+        <dc:Bounds height="30.0" width="30.0" x="2090.0" y="400.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ProcessComplete" bpmnElement="ProcessComplete">
+        <dc:Bounds height="30.0" width="30.0" x="2286.0" y="400.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ProcessDuplicateTransaction" bpmnElement="ProcessDuplicateTransaction">
+        <dc:Bounds height="30.0" width="30.0" x="2246.0" y="160.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_MarkFatalConflict" bpmnElement="MarkFatalConflict">
+        <dc:Bounds height="30.0" width="30.0" x="2326.0" y="560.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_NOTEDUP" bpmnElement="NOTEDUP">
+        <dc:Bounds height="30.0" width="30.0" x="2370.0" y="240.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ProcessRegister" bpmnElement="ProcessRegister">
+        <dc:Bounds height="30.0" width="30.0" x="120.0" y="400.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ProcessStatus" bpmnElement="ProcessStatus">
+        <dc:Bounds height="30.0" width="30.0" x="2006.0" y="360.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Conditional6" bpmnElement="Conditional6">
+        <dc:Bounds height="30.0" width="30.0" x="2086.0" y="560.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Conditional7" bpmnElement="Conditional7">
+        <dc:Bounds height="30.0" width="30.0" x="520.0" y="840.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_FataConflictTimedOut" bpmnElement="FataConflictTimedOut">
+        <dc:Bounds height="30.0" width="30.0" x="640.0" y="840.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EmailReReview" bpmnElement="EmailReReview">
+        <dc:Bounds height="30.0" width="30.0" x="2326.0" y="960.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EmailBusRevConflict" bpmnElement="EmailBusRevConflict">
+        <dc:Bounds height="30.0" width="30.0" x="800.0" y="200.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EmailControlRevConflict" bpmnElement="EmailControlRevConflict">
+        <dc:Bounds height="30.0" width="30.0" x="1320.0" y="480.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EmailBusGreenControlRed" bpmnElement="EmailBusGreenControlRed">
+        <dc:Bounds height="30.0" width="30.0" x="2206.0" y="760.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Conditional" bpmnElement="Conditional">
+        <dc:Bounds height="30.0" width="30.0" x="400.0" y="280.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Conditional1" bpmnElement="Conditional1">
+        <dc:Bounds height="30.0" width="30.0" x="200.0" y="280.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EmailExpDateChange" bpmnElement="EmailExpDateChange">
+        <dc:Bounds height="30.0" width="30.0" x="320.0" y="160.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EmailBusRedControlGreen" bpmnElement="EmailBusRedControlGreen">
+        <dc:Bounds height="30.0" width="30.0" x="2286.0" y="840.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_EmailNew" bpmnElement="EmailNew">
+        <dc:Bounds height="30.0" width="30.0" x="200.0" y="400.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Remind" bpmnElement="Remind">
+        <dc:Bounds height="30.0" width="30.0" x="800.0" y="480.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Remind1" bpmnElement="Remind1">
+        <dc:Bounds height="30.0" width="30.0" x="1320.0" y="800.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_BUSREV" bpmnElement="BUSREV">
+        <dc:Bounds height="30.0" width="30.0" x="800.0" y="320.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_CTLREV" bpmnElement="CTLREV">
+        <dc:Bounds height="30.0" width="30.0" x="1320.0" y="640.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_NotifyChange" bpmnElement="NotifyChange">
+        <dc:Bounds height="30.0" width="30.0" x="440.0" y="80.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_BankerC" bpmnElement="BankerC">
+        <dc:Bounds height="30.0" width="30.0" x="2180.0" y="290.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_BankerCleared" bpmnElement="BankerCleared">
+        <dc:Bounds height="30.0" width="30.0" x="2310.0" y="320.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_ProcessGroup" bpmnElement="ProcessGroup">
+        <dc:Bounds height="30.0" width="30.0" x="2246.0" y="1040.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_End" bpmnElement="End">
+        <dc:Bounds height="30.0" width="30.0" x="2406.0" y="400.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_C_sendToWait" bpmnElement="C_sendToWait">
+        <dc:Bounds height="30.0" width="30.0" x="2006.0" y="960.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_C_Join1" bpmnElement="C_Join1">
+        <dc:Bounds height="30.0" width="30.0" x="600.0" y="960.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_C_Join11" bpmnElement="C_Join11">
+        <dc:Bounds height="30.0" width="30.0" x="1000.0" y="640.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_C_Join12" bpmnElement="C_Join12">
+        <dc:Bounds height="30.0" width="30.0" x="1400.0" y="160.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_CTLREV_transition_event_due_timer" bpmnElement="CTLREV_transition_event_due_timer">
+        <dc:Bounds height="30.0" width="30.0" x="1310.0" y="580.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_BUSREV_transition_event_due_timer" bpmnElement="BUSREV_transition_event_due_timer">
+        <dc:Bounds height="30.0" width="30.0" x="790.0" y="260.0"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_CLOSETRX_transition_event_due_timer" bpmnElement="CLOSETRX_transition_event_due_timer">
+        <dc:Bounds height="30.0" width="30.0" x="510.0" y="660.0"/>
+      </bpmndi:BPMNShape>
+      <!-- Edges -->
+      <bpmndi:BPMNEdge id="BPMNEdge_BeginToProcessRegister" bpmnElement="BeginToProcessRegister" sourceElement="BPMNShape_Begin" targetElement="BPMNShape_ProcessRegister">
+        <di:waypoint xsi:type="dc:Point" x="40.0" y="400.0"/>
+        <di:waypoint xsi:type="dc:Point" x="120.0" y="400.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_EvaluateUpdateToJoin" bpmnElement="EvaluateUpdateToJoin" sourceElement="BPMNShape_EvaluateUpdate" targetElement="BPMNShape_Join">
+        <di:waypoint xsi:type="dc:Point" x="520.0" y="80.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1926.0" y="400.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SplitUpdateandReviewerToSplitReviewers" bpmnElement="SplitUpdateandReviewerToSplitReviewers" sourceElement="BPMNShape_SplitUpdateandReviewer" targetElement="BPMNShape_SplitReviewers">
+        <di:waypoint xsi:type="dc:Point" x="400.0" y="400.0"/>
+        <di:waypoint xsi:type="dc:Point" x="560.0" y="400.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SplitReviewersToBUSREV" bpmnElement="SplitReviewersToBUSREV" sourceElement="BPMNShape_SplitReviewers" targetElement="BPMNShape_BUSREV">
+        <di:waypoint xsi:type="dc:Point" x="560.0" y="400.0"/>
+        <di:waypoint xsi:type="dc:Point" x="800.0" y="320.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SplitUpdateandReviewerToUPDTRX" bpmnElement="SplitUpdateandReviewerToUPDTRX" sourceElement="BPMNShape_SplitUpdateandReviewer" targetElement="BPMNShape_UPDTRX">
+        <di:waypoint xsi:type="dc:Point" x="400.0" y="400.0"/>
+        <di:waypoint xsi:type="dc:Point" x="200.0" y="120.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_JoinToProcessStatus" bpmnElement="JoinToProcessStatus" sourceElement="BPMNShape_Join" targetElement="BPMNShape_ProcessStatus">
+        <di:waypoint xsi:type="dc:Point" x="1926.0" y="400.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2006.0" y="360.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_Join1ToJoin" bpmnElement="Join1ToJoin" sourceElement="BPMNShape_Join1" targetElement="BPMNShape_Join">
+        <di:waypoint xsi:type="dc:Point" x="1766.0" y="400.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1926.0" y="400.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_BUSREVToJoin1" bpmnElement="BUSREVToJoin1" sourceElement="BPMNShape_BUSREV" targetElement="BPMNShape_Join1">
+        <di:waypoint xsi:type="dc:Point" x="800.0" y="320.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1766.0" y="400.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SplitReviewersToCTLREV" bpmnElement="SplitReviewersToCTLREV" sourceElement="BPMNShape_SplitReviewers" targetElement="BPMNShape_CTLREV">
+        <di:waypoint xsi:type="dc:Point" x="560.0" y="400.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1320.0" y="640.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_CTLREVToJoin1" bpmnElement="CTLREVToJoin1" sourceElement="BPMNShape_CTLREV" targetElement="BPMNShape_Join1">
+        <di:waypoint xsi:type="dc:Point" x="1320.0" y="640.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1766.0" y="400.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_CTLREV_transition_event_due_timerToRemind1" bpmnElement="CTLREV_transition_event_due_timerToRemind1" sourceElement="BPMNShape_CTLREV_transition_event_due_timer" targetElement="BPMNShape_Remind1">
+        <di:waypoint xsi:type="dc:Point" x="1310.0" y="580.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1320.0" y="800.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_CTLREVToRemind1" bpmnElement="CTLREVToRemind1" sourceElement="BPMNShape_CTLREV" targetElement="BPMNShape_Remind1">
+        <di:waypoint xsi:type="dc:Point" x="1320.0" y="640.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1320.0" y="800.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_Remind1ToCTLREV" bpmnElement="Remind1ToCTLREV" sourceElement="BPMNShape_Remind1" targetElement="BPMNShape_CTLREV">
+        <di:waypoint xsi:type="dc:Point" x="1320.0" y="800.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1320.0" y="640.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_BUSREV_transition_event_due_timerToRemind" bpmnElement="BUSREV_transition_event_due_timerToRemind" sourceElement="BPMNShape_BUSREV_transition_event_due_timer" targetElement="BPMNShape_Remind">
+        <di:waypoint xsi:type="dc:Point" x="790.0" y="260.0"/>
+        <di:waypoint xsi:type="dc:Point" x="800.0" y="480.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_BUSREVToRemind" bpmnElement="BUSREVToRemind" sourceElement="BPMNShape_BUSREV" targetElement="BPMNShape_Remind">
+        <di:waypoint xsi:type="dc:Point" x="800.0" y="320.0"/>
+        <di:waypoint xsi:type="dc:Point" x="800.0" y="480.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_sendToWaitToSplitUpdateandReviewer" bpmnElement="sendToWaitToSplitUpdateandReviewer" sourceElement="BPMNShape_sendToWait" targetElement="BPMNShape_SplitUpdateandReviewer">
+        <di:waypoint xsi:type="dc:Point" x="280.0" y="400.0"/>
+        <di:waypoint xsi:type="dc:Point" x="400.0" y="400.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_Conditional3ToProcessComplete" bpmnElement="Conditional3ToProcessComplete" sourceElement="BPMNShape_Conditional3" targetElement="BPMNShape_ProcessComplete">
+        <di:waypoint xsi:type="dc:Point" x="2090.0" y="400.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2286.0" y="400.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_ProcessCompleteToEnd" bpmnElement="ProcessCompleteToEnd" sourceElement="BPMNShape_ProcessComplete" targetElement="BPMNShape_End">
+        <di:waypoint xsi:type="dc:Point" x="2286.0" y="400.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2406.0" y="400.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_ProcessDuplicateTransactionToNOTEDUP" bpmnElement="ProcessDuplicateTransactionToNOTEDUP" sourceElement="BPMNShape_ProcessDuplicateTransaction" targetElement="BPMNShape_NOTEDUP">
+        <di:waypoint xsi:type="dc:Point" x="2246.0" y="160.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2370.0" y="240.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_Conditional3ToProcessDuplicateTransaction" bpmnElement="Conditional3ToProcessDuplicateTransaction" sourceElement="BPMNShape_Conditional3" targetElement="BPMNShape_ProcessDuplicateTransaction">
+        <di:waypoint xsi:type="dc:Point" x="2090.0" y="400.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2246.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_MarkFatalConflictToEmailFatalConflict1" bpmnElement="MarkFatalConflictToEmailFatalConflict1" sourceElement="BPMNShape_MarkFatalConflict" targetElement="BPMNShape_EmailFatalConflict1">
+        <di:waypoint xsi:type="dc:Point" x="2326.0" y="560.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2406.0" y="480.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_Conditional3ToMarkFatalConflict" bpmnElement="Conditional3ToMarkFatalConflict" sourceElement="BPMNShape_Conditional3" targetElement="BPMNShape_MarkFatalConflict">
+        <di:waypoint xsi:type="dc:Point" x="2090.0" y="400.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2326.0" y="560.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_NOTEDUPToEnd" bpmnElement="NOTEDUPToEnd" sourceElement="BPMNShape_NOTEDUP" targetElement="BPMNShape_End">
+        <di:waypoint xsi:type="dc:Point" x="2370.0" y="240.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2406.0" y="400.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SplitUpdateandReviewerToDUPTRX" bpmnElement="SplitUpdateandReviewerToDUPTRX" sourceElement="BPMNShape_SplitUpdateandReviewer" targetElement="BPMNShape_DUPTRX">
+        <di:waypoint xsi:type="dc:Point" x="400.0" y="400.0"/>
+        <di:waypoint xsi:type="dc:Point" x="480.0" y="520.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_DUPTRXToMarkDup" bpmnElement="DUPTRXToMarkDup" sourceElement="BPMNShape_DUPTRX" targetElement="BPMNShape_MarkDup">
+        <di:waypoint xsi:type="dc:Point" x="480.0" y="520.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1766.0" y="760.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SplitUpdateandReviewerToCLOSETRX" bpmnElement="SplitUpdateandReviewerToCLOSETRX" sourceElement="BPMNShape_SplitUpdateandReviewer" targetElement="BPMNShape_CLOSETRX">
+        <di:waypoint xsi:type="dc:Point" x="400.0" y="400.0"/>
+        <di:waypoint xsi:type="dc:Point" x="520.0" y="720.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_CLOSETRXToMarkClose" bpmnElement="CLOSETRXToMarkClose" sourceElement="BPMNShape_CLOSETRX" targetElement="BPMNShape_MarkClose">
+        <di:waypoint xsi:type="dc:Point" x="520.0" y="720.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1766.0" y="1040.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_ProcessRegisterToEmailNew" bpmnElement="ProcessRegisterToEmailNew" sourceElement="BPMNShape_ProcessRegister" targetElement="BPMNShape_EmailNew">
+        <di:waypoint xsi:type="dc:Point" x="120.0" y="400.0"/>
+        <di:waypoint xsi:type="dc:Point" x="200.0" y="400.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_ProcessStatusToConditional3" bpmnElement="ProcessStatusToConditional3" sourceElement="BPMNShape_ProcessStatus" targetElement="BPMNShape_Conditional3">
+        <di:waypoint xsi:type="dc:Point" x="2006.0" y="360.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2090.0" y="400.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_Conditional3ToConditional6" bpmnElement="Conditional3ToConditional6" sourceElement="BPMNShape_Conditional3" targetElement="BPMNShape_Conditional6">
+        <di:waypoint xsi:type="dc:Point" x="2090.0" y="400.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2086.0" y="560.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_Conditional6ToEmailReReview" bpmnElement="Conditional6ToEmailReReview" sourceElement="BPMNShape_Conditional6" targetElement="BPMNShape_EmailReReview">
+        <di:waypoint xsi:type="dc:Point" x="2086.0" y="560.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2326.0" y="960.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_Conditional7ToFataConflictTimedOut" bpmnElement="Conditional7ToFataConflictTimedOut" sourceElement="BPMNShape_Conditional7" targetElement="BPMNShape_FataConflictTimedOut">
+        <di:waypoint xsi:type="dc:Point" x="520.0" y="840.0"/>
+        <di:waypoint xsi:type="dc:Point" x="640.0" y="840.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_Conditional7ToCLOSETRX" bpmnElement="Conditional7ToCLOSETRX" sourceElement="BPMNShape_Conditional7" targetElement="BPMNShape_CLOSETRX">
+        <di:waypoint xsi:type="dc:Point" x="520.0" y="840.0"/>
+        <di:waypoint xsi:type="dc:Point" x="520.0" y="720.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_FataConflictTimedOutToJoin1" bpmnElement="FataConflictTimedOutToJoin1" sourceElement="BPMNShape_FataConflictTimedOut" targetElement="BPMNShape_C_Join1">
+        <di:waypoint xsi:type="dc:Point" x="640.0" y="840.0"/>
+        <di:waypoint xsi:type="dc:Point" x="600.0" y="960.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_BUSREVToEmailBusRevConflict" bpmnElement="BUSREVToEmailBusRevConflict" sourceElement="BPMNShape_BUSREV" targetElement="BPMNShape_EmailBusRevConflict">
+        <di:waypoint xsi:type="dc:Point" x="800.0" y="320.0"/>
+        <di:waypoint xsi:type="dc:Point" x="800.0" y="200.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_EmailBusRevConflictToBUSREV" bpmnElement="EmailBusRevConflictToBUSREV" sourceElement="BPMNShape_EmailBusRevConflict" targetElement="BPMNShape_BUSREV">
+        <di:waypoint xsi:type="dc:Point" x="800.0" y="200.0"/>
+        <di:waypoint xsi:type="dc:Point" x="800.0" y="320.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_CTLREVToEmailControlRevConflict" bpmnElement="CTLREVToEmailControlRevConflict" sourceElement="BPMNShape_CTLREV" targetElement="BPMNShape_EmailControlRevConflict">
+        <di:waypoint xsi:type="dc:Point" x="1320.0" y="640.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1320.0" y="480.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_EmailControlRevConflictToCTLREV" bpmnElement="EmailControlRevConflictToCTLREV" sourceElement="BPMNShape_EmailControlRevConflict" targetElement="BPMNShape_CTLREV">
+        <di:waypoint xsi:type="dc:Point" x="1320.0" y="480.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1320.0" y="640.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_EmailBusGreenControlRedTosendToWait" bpmnElement="EmailBusGreenControlRedTosendToWait" sourceElement="BPMNShape_EmailBusGreenControlRed" targetElement="BPMNShape_C_sendToWait">
+        <di:waypoint xsi:type="dc:Point" x="2206.0" y="760.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2006.0" y="960.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_Conditional6ToEmailBusGreenControlRed" bpmnElement="Conditional6ToEmailBusGreenControlRed" sourceElement="BPMNShape_Conditional6" targetElement="BPMNShape_EmailBusGreenControlRed">
+        <di:waypoint xsi:type="dc:Point" x="2086.0" y="560.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2206.0" y="760.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_EmailReReviewTosendToWait" bpmnElement="EmailReReviewTosendToWait" sourceElement="BPMNShape_EmailReReview" targetElement="BPMNShape_C_sendToWait">
+        <di:waypoint xsi:type="dc:Point" x="2326.0" y="960.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2006.0" y="960.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_EmailBusRedControlGreenTosendToWait" bpmnElement="EmailBusRedControlGreenTosendToWait" sourceElement="BPMNShape_EmailBusRedControlGreen" targetElement="BPMNShape_C_sendToWait">
+        <di:waypoint xsi:type="dc:Point" x="2286.0" y="840.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2006.0" y="960.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_Conditional6ToEmailBusRedControlGreen" bpmnElement="Conditional6ToEmailBusRedControlGreen" sourceElement="BPMNShape_Conditional6" targetElement="BPMNShape_EmailBusRedControlGreen">
+        <di:waypoint xsi:type="dc:Point" x="2086.0" y="560.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2286.0" y="840.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_EmailNewTosendToWait" bpmnElement="EmailNewTosendToWait" sourceElement="BPMNShape_EmailNew" targetElement="BPMNShape_sendToWait">
+        <di:waypoint xsi:type="dc:Point" x="200.0" y="400.0"/>
+        <di:waypoint xsi:type="dc:Point" x="280.0" y="400.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_RemindToBUSREV" bpmnElement="RemindToBUSREV" sourceElement="BPMNShape_Remind" targetElement="BPMNShape_BUSREV">
+        <di:waypoint xsi:type="dc:Point" x="800.0" y="480.0"/>
+        <di:waypoint xsi:type="dc:Point" x="800.0" y="320.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_BUSREVToRemind" bpmnElement="BUSREVToRemind" sourceElement="BPMNShape_BUSREV" targetElement="BPMNShape_Remind">
+        <di:waypoint xsi:type="dc:Point" x="800.0" y="320.0"/>
+        <di:waypoint xsi:type="dc:Point" x="800.0" y="480.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_CTLREVToRemind1" bpmnElement="CTLREVToRemind1" sourceElement="BPMNShape_CTLREV" targetElement="BPMNShape_Remind1">
+        <di:waypoint xsi:type="dc:Point" x="1320.0" y="640.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1320.0" y="800.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_ConditionalToEvaluateUpdate" bpmnElement="ConditionalToEvaluateUpdate" sourceElement="BPMNShape_Conditional" targetElement="BPMNShape_EvaluateUpdate">
+        <di:waypoint xsi:type="dc:Point" x="400.0" y="280.0"/>
+        <di:waypoint xsi:type="dc:Point" x="520.0" y="80.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_NotifyChangeToUPDTRX" bpmnElement="NotifyChangeToUPDTRX" sourceElement="BPMNShape_NotifyChange" targetElement="BPMNShape_UPDTRX">
+        <di:waypoint xsi:type="dc:Point" x="440.0" y="80.0"/>
+        <di:waypoint xsi:type="dc:Point" x="200.0" y="120.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_UPDTRXToConditional1" bpmnElement="UPDTRXToConditional1" sourceElement="BPMNShape_UPDTRX" targetElement="BPMNShape_Conditional1">
+        <di:waypoint xsi:type="dc:Point" x="200.0" y="120.0"/>
+        <di:waypoint xsi:type="dc:Point" x="200.0" y="280.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_EmailFatalConflict1ToEnd" bpmnElement="EmailFatalConflict1ToEnd" sourceElement="BPMNShape_EmailFatalConflict1" targetElement="BPMNShape_End">
+        <di:waypoint xsi:type="dc:Point" x="2406.0" y="480.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2406.0" y="400.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SplitReviewersToREDCONF" bpmnElement="SplitReviewersToREDCONF" sourceElement="BPMNShape_SplitReviewers" targetElement="BPMNShape_REDCONF">
+        <di:waypoint xsi:type="dc:Point" x="560.0" y="400.0"/>
+        <di:waypoint xsi:type="dc:Point" x="840.0" y="600.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_SplitReviewersToREDCON2" bpmnElement="SplitReviewersToREDCON2" sourceElement="BPMNShape_SplitReviewers" targetElement="BPMNShape_REDCON2">
+        <di:waypoint xsi:type="dc:Point" x="560.0" y="400.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1240.0" y="120.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_MarkDupToJoin" bpmnElement="MarkDupToJoin" sourceElement="BPMNShape_MarkDup" targetElement="BPMNShape_Join">
+        <di:waypoint xsi:type="dc:Point" x="1766.0" y="760.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1926.0" y="400.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_MarkCloseToJoin" bpmnElement="MarkCloseToJoin" sourceElement="BPMNShape_MarkClose" targetElement="BPMNShape_Join">
+        <di:waypoint xsi:type="dc:Point" x="1766.0" y="1040.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1926.0" y="400.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_StartFatalTimerTosendToWait" bpmnElement="StartFatalTimerTosendToWait" sourceElement="BPMNShape_StartFatalTimer" targetElement="BPMNShape_C_sendToWait">
+        <di:waypoint xsi:type="dc:Point" x="2006.0" y="680.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2006.0" y="960.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_Conditional6ToStartFatalTimer" bpmnElement="Conditional6ToStartFatalTimer" sourceElement="BPMNShape_Conditional6" targetElement="BPMNShape_StartFatalTimer">
+        <di:waypoint xsi:type="dc:Point" x="2086.0" y="560.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2006.0" y="680.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_REDCONFToJoin11" bpmnElement="REDCONFToJoin11" sourceElement="BPMNShape_REDCONF" targetElement="BPMNShape_C_Join11">
+        <di:waypoint xsi:type="dc:Point" x="840.0" y="600.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1000.0" y="640.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_REDCON2ToJoin12" bpmnElement="REDCON2ToJoin12" sourceElement="BPMNShape_REDCON2" targetElement="BPMNShape_C_Join12">
+        <di:waypoint xsi:type="dc:Point" x="1240.0" y="120.0"/>
+        <di:waypoint xsi:type="dc:Point" x="1400.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_ProcessGroupToHandleException" bpmnElement="ProcessGroupToHandleException" sourceElement="BPMNShape_ProcessGroup" targetElement="BPMNShape_HandleException">
+        <di:waypoint xsi:type="dc:Point" x="2246.0" y="1040.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2326.0" y="1160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_Conditional6TosendToWait" bpmnElement="Conditional6TosendToWait" sourceElement="BPMNShape_Conditional6" targetElement="BPMNShape_C_sendToWait">
+        <di:waypoint xsi:type="dc:Point" x="2086.0" y="560.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2006.0" y="960.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_CLOSETRX_transition_event_due_timerToConditional7" bpmnElement="CLOSETRX_transition_event_due_timerToConditional7" sourceElement="BPMNShape_CLOSETRX_transition_event_due_timer" targetElement="BPMNShape_Conditional7">
+        <di:waypoint xsi:type="dc:Point" x="510.0" y="660.0"/>
+        <di:waypoint xsi:type="dc:Point" x="520.0" y="840.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_CLOSETRXToConditional7" bpmnElement="CLOSETRXToConditional7" sourceElement="BPMNShape_CLOSETRX" targetElement="BPMNShape_Conditional7">
+        <di:waypoint xsi:type="dc:Point" x="520.0" y="720.0"/>
+        <di:waypoint xsi:type="dc:Point" x="520.0" y="840.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_ConditionalToNotifyChange" bpmnElement="ConditionalToNotifyChange" sourceElement="BPMNShape_Conditional" targetElement="BPMNShape_NotifyChange">
+        <di:waypoint xsi:type="dc:Point" x="400.0" y="280.0"/>
+        <di:waypoint xsi:type="dc:Point" x="440.0" y="80.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_Conditional1ToConditional" bpmnElement="Conditional1ToConditional" sourceElement="BPMNShape_Conditional1" targetElement="BPMNShape_Conditional">
+        <di:waypoint xsi:type="dc:Point" x="200.0" y="280.0"/>
+        <di:waypoint xsi:type="dc:Point" x="400.0" y="280.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_EmailExpDateChangeToConditional" bpmnElement="EmailExpDateChangeToConditional" sourceElement="BPMNShape_EmailExpDateChange" targetElement="BPMNShape_Conditional">
+        <di:waypoint xsi:type="dc:Point" x="320.0" y="160.0"/>
+        <di:waypoint xsi:type="dc:Point" x="400.0" y="280.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_Conditional1ToEmailExpDateChange" bpmnElement="Conditional1ToEmailExpDateChange" sourceElement="BPMNShape_Conditional1" targetElement="BPMNShape_EmailExpDateChange">
+        <di:waypoint xsi:type="dc:Point" x="200.0" y="280.0"/>
+        <di:waypoint xsi:type="dc:Point" x="320.0" y="160.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_Conditional3ToBankerC" bpmnElement="Conditional3ToBankerC" sourceElement="BPMNShape_Conditional3" targetElement="BPMNShape_BankerC">
+        <di:waypoint xsi:type="dc:Point" x="2090.0" y="400.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2180.0" y="290.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_BankerCToBankerCleared" bpmnElement="BankerCToBankerCleared" sourceElement="BPMNShape_BankerC" targetElement="BPMNShape_BankerCleared">
+        <di:waypoint xsi:type="dc:Point" x="2180.0" y="290.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2310.0" y="320.0"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_BankerClearedToEnd" bpmnElement="BankerClearedToEnd" sourceElement="BPMNShape_BankerCleared" targetElement="BPMNShape_End">
+        <di:waypoint xsi:type="dc:Point" x="2310.0" y="320.0"/>
+        <di:waypoint xsi:type="dc:Point" x="2406.0" y="400.0"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>
