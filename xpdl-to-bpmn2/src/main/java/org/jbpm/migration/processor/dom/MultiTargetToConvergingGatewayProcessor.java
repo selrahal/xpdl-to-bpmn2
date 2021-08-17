@@ -40,8 +40,8 @@ public class MultiTargetToConvergingGatewayProcessor implements DomProcessor {
     		//determine the tags for each of the targets
     		for(Element e : $(bpmn).xpath("//*[@id]").filter(attr("id", m)).get()) {
     			if(shouldProcess(e)) {
-    				String gateway = m+"-ExclusiveConvergingGateway";
-    				String sequenceFlow = gateway+"-To-"+m;
+    				String gateway = m+"_";
+    				String sequenceFlow = gateway+"_"+m;
     				LOG.info("Must Introduce: Converging Gateway ["+gateway+"] " + " for " + m + " matching " + $(e).toString());
     				LOG.info("Must Introduce: Sequence Flow ["+sequenceFlow+"] :: from["+gateway+"] to["+m+"]");
     				
@@ -118,9 +118,9 @@ public class MultiTargetToConvergingGatewayProcessor implements DomProcessor {
 		Match gateway = process.child(attr("id", gatewayName));
 		node.children("incoming").remove();
 		process.children("sequenceFlow").filter(attr("targetRef", nodeId)).each().forEach(
-				flow -> gateway.append($("bpmn2:incoming").text(flow.id()))
+				flow -> gateway.prepend($("bpmn2:incoming").text(flow.id()))
 		);
-		node.append($("bpmn2:incoming").text(sequenceFlowId));
+		node.prepend($("bpmn2:incoming").text(sequenceFlowId));
 	}
 	
 	

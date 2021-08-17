@@ -43,7 +43,7 @@
     </bpmn2:definitions>
   </xsl:template>
   <xsl:template match="xpdl2:WorkflowProcesses">
-    <xsl:apply-templates select="xpdl2:WorkflowProcess/xpdl2:Activities/xpdl2:Activity/xpdl2:Event/xpdl2:IntermediateEvent[@Trigger='Link']/xpdl2:TriggerResultLink"/>
+    <xsl:apply-templates select="xpdl2:WorkflowProcess/xpdl2:Activities/xpdl2:Activity/xpdl2:Event/xpdl2:IntermediateEvent[@Trigger='Link']"/>
     <xsl:apply-templates select="xpdl2:WorkflowProcess"/>
   </xsl:template>
   <xsl:template match="xpdl2:WorkflowProcess">
@@ -97,9 +97,11 @@
     <xsl:apply-templates select="xpdl2:Activity/xpdl2:Implementation/xpdl2:No"/>
     <xsl:apply-templates select="xpdl2:Activity/xpdl2:Implementation/xpdl2:Task/xpdl2:TaskUser"/>
     <xsl:apply-templates select="xpdl2:Activity/xpdl2:Implementation/xpdl2:Task/xpdl2:TaskScript"/>
+    <xsl:apply-templates select="xpdl2:Activity/xpdl2:Implementation/xpdl2:Task/xpdl2:TaskService"/>
     <xsl:apply-templates select="xpdl2:Activity/xpdl2:Implementation/xpdl2:SubFlow"/>
     <xsl:comment>Messages</xsl:comment>
-    <xsl:apply-templates select="xpdl2:Activity/xpdl2:Event/xpdl2:IntermediateEvent[@Trigger='Link']"/>
+    <xsl:apply-templates select="xpdl2:Activity/xpdl2:Event/xpdl2:IntermediateEvent[@Trigger='Link']/xpdl2:TriggerResultLink[@CatchThrow='CATCH']"/>
+    <xsl:apply-templates select="xpdl2:Activity/xpdl2:Event/xpdl2:IntermediateEvent[@Trigger='Link']/xpdl2:TriggerResultLink[@CatchThrow='THROW']"/>
     <xsl:comment>Timers</xsl:comment>
     <xsl:apply-templates select="xpdl2:Activity/xpdl2:Event/xpdl2:IntermediateEvent[@Trigger='Timer']"/>
   </xsl:template>
