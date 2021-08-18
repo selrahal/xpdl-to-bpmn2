@@ -15,9 +15,9 @@
       <xsl:attribute name="name">
         <xsl:value-of select="$nodeName"/>
       </xsl:attribute>
-      <xsl:attribute name="calledElement">
+<!--       <xsl:attribute name="calledElement">
         <xsl:value-of select="$nodeName"/>
-      </xsl:attribute>
+      </xsl:attribute> -->
       <bpmn2:extensionElements>
         <xsl:apply-templates select="../../xpdExt:Audit/xpdExt:AuditEvent[@Type='Initiated']"/>
         <xsl:apply-templates select="../../xpdExt:Audit/xpdExt:AuditEvent[@Type='Completed']"/>

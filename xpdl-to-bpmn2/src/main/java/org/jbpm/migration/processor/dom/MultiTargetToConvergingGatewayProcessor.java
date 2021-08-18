@@ -40,8 +40,8 @@ public class MultiTargetToConvergingGatewayProcessor implements DomProcessor {
     		//determine the tags for each of the targets
     		for(Element e : $(bpmn).xpath("//*[@id]").filter(attr("id", m)).get()) {
     			if(shouldProcess(e)) {
-    				String gateway = m+"_";
-    				String sequenceFlow = gateway+"_"+m;
+    				String gateway = m+"-ExclusiveConvergingGateway";
+    				String sequenceFlow = gateway+"-To-"+m;
     				LOG.info("Must Introduce: Converging Gateway ["+gateway+"] " + " for " + m + " matching " + $(e).toString());
     				LOG.info("Must Introduce: Sequence Flow ["+sequenceFlow+"] :: from["+gateway+"] to["+m+"]");
     				

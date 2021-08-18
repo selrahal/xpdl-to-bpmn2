@@ -56,7 +56,7 @@ public class EnsureShapesExistProcessor implements DomProcessor {
 		//If there is not a BPMNEdge for this flowId, create it
 		double y = 0.0;
 		LinkedList<OffsetElement> toCheck = new LinkedList<>();
-		for (Element element : $(bpmn).find("process").children().filter(JOOX.not(JOOX.tag("sequenceFlow"))).get()) {
+		for (Element element : $(bpmn).find("process").children().filter(JOOX.and(JOOX.not(JOOX.tag("sequenceFlow")),JOOX.not(JOOX.tag("property")),JOOX.not(JOOX.tag("laneSet")))).get()) {
 			OffsetElement toAdd = new OffsetElement();
 			toAdd.element = element;
 			toAdd.offset = 0.0;
@@ -86,14 +86,22 @@ public class EnsureShapesExistProcessor implements DomProcessor {
 			}
 			
 			String elementRef = $(oe.element).attr("id");
-			if (elementRef != null && findBpmnShapeName(bpmn, elementRef) == null) {
-				LOG.info("Creating BPMNShape for: " + elementRef + " x=" + oe.offset + ", y=" + y);
-				addBpmnShape(bpmn, elementRef,oe.offset, y);
-				y += 100.0;
-			}
+
+				if (elementRef != null && findBpmnShapeName(bpmn, elementRef) == null) {
+					LOG.info("Creating BPMNShape for: " + elementRef + " x=" + oe.offset + ", y=" + y);
+					addBpmnShape(bpmn, elementRef,oe.offset, y);
+					y += 100.0;
+				}
+
 		}
 		
 		return bpmn;
+	}
+	
+	private Boolean shouldCreateShape(Document bpmn, String sourceRef) {
+
+		
+		return null;
 	}
 	private String findBpmnShapeName(Document bpmn, String sourceRef) {
 		String bpmnShapeId = $(bpmn).find("BPMNShape").filter(attr("bpmnElement", sourceRef)).first().attr("id");
@@ -113,6 +121,8 @@ public class EnsureShapesExistProcessor implements DomProcessor {
 					.append($("dc:Bounds")
 							.attr("x", Double.toString(x))
 							.attr("y", Double.toString(y))
+							.attr("height", Double.toString(100))
+							.attr("width", Double.toString(100))
 					)
 				);
 	}

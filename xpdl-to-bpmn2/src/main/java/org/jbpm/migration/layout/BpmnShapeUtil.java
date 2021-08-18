@@ -71,7 +71,7 @@ public class BpmnShapeUtil {
 	private static String addBpmnShape(GraphModel graphModel, Document document, String bpmnElementId, Map<String, Node> nodes) {
 		String elementId = "BPMNShape_"+bpmnElementId;
 		//<dc:Bounds height="30.0" width="30.0" x="0.0" y="0.0"/>
-		Match bounds = $("dc:Bounds").attr("xmlns:dc", "http://www.omg.org/spec/DD/20100524/DC");
+		Match bounds = $("dc:Bounds");
 		bounds.attr("x", "0").attr("y", "0");
 		bounds.attr("width", "120").attr("height", "80");
 		

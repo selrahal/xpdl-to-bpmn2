@@ -106,6 +106,7 @@
     <xsl:apply-templates select="xpdl2:Activity/xpdl2:Event/xpdl2:IntermediateEvent[@Trigger='Timer']"/>
   </xsl:template>
   <xsl:template match="xpdl2:Transitions">
+    <xsl:comment>Sequence Flows</xsl:comment>
     <xsl:apply-templates select="xpdl2:Transition"/>
   </xsl:template>
 </xsl:stylesheet>

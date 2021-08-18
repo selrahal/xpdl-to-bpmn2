@@ -10,9 +10,9 @@
     <xsl:variable name="origProcessId" select="@Process"/>
     <xsl:variable name="processId" select="translate($origProcessId,':','_')"/>
     <bpmn2:laneSet>
-        <xsl:attribute name="id">
+<!--         <xsl:attribute name="id">
             <xsl:value-of select="$nodeId"/>
-        </xsl:attribute>
+        </xsl:attribute> -->
         <xsl:attribute name="name">
             <xsl:value-of select="$nodeName"/>
         </xsl:attribute>
