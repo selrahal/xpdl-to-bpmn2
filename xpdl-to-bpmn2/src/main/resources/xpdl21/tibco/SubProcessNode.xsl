@@ -32,11 +32,13 @@
           <xsl:value-of select="translate(./@Id,':','_')"/>
         </bpmn2:outgoing>
       </xsl:for-each>
+      
+<!-- until we get https://issues.redhat.com/browse/KOGITO-5731
       <bpmn2:ioSpecification>
         <xsl:attribute name="id">
           <xsl:value-of select="concat('InputOutputSpecification_', $nodeId)"/>
         </xsl:attribute>
-        <!-- bpmn2:dataInput id="DataInput_1" itemSubjectRef="_String" name="inFirstName"/ -->
+
         <xsl:for-each select="xpdl2:DataMappings/xpdl2:DataMapping[@Direction='IN']">
           <bpmn2:dataInput itemSubjectRef="_String">
             <xsl:attribute name="id">
@@ -47,7 +49,7 @@
             </xsl:attribute>
           </bpmn2:dataInput>
         </xsl:for-each>
-        <!-- bpmn2:dataOutput id="DataOutput_1" itemSubjectRef="_Integer" name="outInteger"/ -->
+
         <xsl:for-each select="xpdl2:DataMappings/xpdl2:DataMapping[@Direction='OUT']">
           <bpmn2:dataOutput itemSubjectRef="_String">
             <xsl:attribute name="id">
@@ -62,7 +64,7 @@
           <xsl:attribute name="id">
             <xsl:value-of select="concat('_InputSet_',$nodeId, '_', @Formal)"/>
           </xsl:attribute>
-          <!-- <bpmn2:dataInputRefs>DataInput_1</bpmn2:dataInputRefs> -->
+
           <xsl:for-each select="xpdl2:DataMappings/xpdl2:DataMapping[@Direction='IN']">
             <bpmn2:dataInputRefs>
               <xsl:value-of select="concat('DataInput_',$nodeId, '_', @Formal)"/>
@@ -73,7 +75,7 @@
           <xsl:attribute name="id">
             <xsl:value-of select="concat('_OutputSet_',$nodeId, '_', @Formal)"/>
           </xsl:attribute>
-          <!-- <bpmn2:dataOutputRefs>DataOutput_1</bpmn2:dataOutputRefs> -->
+
           <xsl:for-each select="xpdl2:DataMappings/xpdl2:DataMapping[@Direction='OUT']">
             <bpmn2:dataOutputRefs>
               <xsl:value-of select="concat('DataOutput_',$nodeId, '_', @Formal)"/>
@@ -81,10 +83,7 @@
           </xsl:for-each>
         </bpmn2:outputSet>
       </bpmn2:ioSpecification>
-      <!-- <bpmn2:dataInputAssociation id="DataInputAssociation_1">
-     <bpmn2:sourceRef>firstName</bpmn2:sourceRef>
-<bpmn2:targetRef>DataInput_1</bpmn2:targetRef>
-</bpmn2:dataInputAssociation>-->
+
       <xsl:for-each select="xpdl2:DataMappings/xpdl2:DataMapping[@Direction='IN']">
         <bpmn2:dataInputAssociation>
           <xsl:attribute name="id">
@@ -98,10 +97,7 @@
           </bpmn2:targetRef>
         </bpmn2:dataInputAssociation>
       </xsl:for-each>
-      <!-- <bpmn2:dataOutputAssociation id="DataOutputAssociation_1">
-     <bpmn2:sourceRef>DataOutput_1</bpmn2:sourceRef>
-<bpmn2:targetRef>i</bpmn2:targetRef>
-</bpmn2:dataOutputAssociation>-->
+
       <xsl:for-each select="xpdl2:DataMappings/xpdl2:DataMapping[@Direction='OUT']">
         <bpmn2:dataOutputAssociation>
           <xsl:attribute name="id">
@@ -115,6 +111,7 @@
           </bpmn2:targetRef>
         </bpmn2:dataOutputAssociation>
       </xsl:for-each>
+      -->
     </bpmn2:callActivity>
   </xsl:template>
 </xsl:stylesheet>

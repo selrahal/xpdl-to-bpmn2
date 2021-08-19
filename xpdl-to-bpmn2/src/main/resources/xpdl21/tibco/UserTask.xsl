@@ -32,6 +32,7 @@
     </bpmn2:userTask>
   </xsl:template>
 
+<!--  until we get https://issues.redhat.com/browse/KOGITO-5731
   <xsl:template match="xpdExt:AssociatedParameters">
     <xsl:variable name="origId" select="../@Id"/>
     <xsl:variable name="nodeId" select="translate($origId,':','_')"/>
@@ -284,7 +285,7 @@
       </bpmn2:dataOutputAssociation>
     </xsl:for-each>
   </xsl:template>
-
+-->
   <xsl:template match="xpdl2:Performers/xpdl2:Performer">
     <xsl:variable name="origPerformer" select="text()"/>
     <xsl:variable name="performer" select="translate($origPerformer,':','_')"/>
