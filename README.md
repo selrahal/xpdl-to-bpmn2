@@ -57,3 +57,21 @@ Then you can use maven to run the migration, you must pass in the file location 
 ```bash
 [selrahal@localhost xpdl-to-bpmn2]$ mvn exec:java -Dexec.mainClass="org.jbpm.migration.main.JbpmMigration" -Dexec.args="in.xpdl generated"
 ```
+
+
+### Easy way to use podman for testing with jbpm workbench
+
+
+To spin up a shell in one of the containers try:
+
+```bash
+    docker run -t -i -P jboss/jbpm-workbench /bin/bash
+```
+
+You can then noodle around the container and run stuff & look at files etc.
+
+You can run the jBPM Workbench web application by running command:
+
+```bash
+    /opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 --server-config=standalone-full.xml
+```
