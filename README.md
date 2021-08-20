@@ -65,7 +65,7 @@ Then you can use maven to run the migration, you must pass in the file location 
 To spin up a shell in one of the containers try:
 
 ```bash
-    docker run -t -i -P jboss/jbpm-workbench /bin/bash
+    podman  run --rm  -i -t -p 8080:8080 -p 8001:8001 -p 8787:8787 --name jbpm-workbench jboss/jbpm-workbench-showcase:latest /bin/bash
 ```
 
 You can then noodle around the container and run stuff & look at files etc.
@@ -75,3 +75,6 @@ You can run the jBPM Workbench web application by running command:
 ```bash
     /opt/jboss/wildfly/bin/standalone.sh -b 0.0.0.0 --server-config=standalone-full.xml
 ```
+
+
+And log in with `admin`:`admin`
